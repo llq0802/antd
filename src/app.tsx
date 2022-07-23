@@ -125,12 +125,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  * 比如在最前面添加一个 /foo 路由，
  * @param param0
  */
-export function patchRoutes({ routes }) {
-  console.log('修改路由。', routes);
-
-  // routes.unshift({
-  //   path: '/foo',
-  //   exact: true,
-  //   component: require('@/extraRoutes/foo').default,
-  // });
-}
+// export function patchRoutes({ routes }) {
+//   // routes.unshift({
+//   //   path: '/foo',
+//   //   exact: true,
+//   //   component: require('@/extraRoutes/foo').default,
+//   // });
+// }
