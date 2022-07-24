@@ -32,7 +32,7 @@ const Settings: LayoutSettings & {
   headerHeight: 48,
   splitMenus: false,
   footerRender: false,
-  title: '',
+  title: '系统',
 };
 
 export default Settings;

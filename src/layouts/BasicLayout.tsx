@@ -5,9 +5,8 @@ import type {
 } from '@ant-design/pro-layout';
 import ProLayout, { DefaultFooter } from '@ant-design/pro-layout';
 import React from 'react';
-import { Link } from 'umi';
+import { Link, history } from 'umi';
 import { GithubOutlined } from '@ant-design/icons';
-import RightContent from '@/components/GlobalHeader/RightContent';
 import logo from '../assets/logo.svg';
 
 export type BasicLayoutProps = {
@@ -64,43 +63,39 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     },
   } = props;
 
-  const { formatMessage } = useIntl();
-
   return (
     <ProLayout
-      logo={logo}
-      formatMessage={formatMessage}
+      // logo={logo}
       {...props}
-      onCollapse={handleMenuCollapse}
       onMenuHeaderClick={() => history.push('/')}
-      menuItemRender={(menuItemProps, defaultDom) => {
-        if (
-          menuItemProps.isUrl ||
-          !menuItemProps.path ||
-          location.pathname === menuItemProps.path
-        ) {
-          return defaultDom;
-        }
-        return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-      }}
-      breadcrumbRender={(routers = []) => [
-        {
-          path: '/',
-          breadcrumbName: formatMessage({ id: 'menu.home' }),
-        },
-        ...routers,
-      ]}
-      itemRender={(route, params, routes, paths) => {
-        const first = routes.indexOf(route) === 0;
-        return first ? (
-          <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-        ) : (
-          <span>{route.breadcrumbName}</span>
-        );
-      }}
-      footerRender={() => defaultFooterDom}
-      menuDataRender={menuDataRender}
-      rightContentRender={() => <RightContent />}
+      // menuItemRender={(menuItemProps, defaultDom) => {
+      //   if (
+      //     menuItemProps.isUrl ||
+      //     !menuItemProps.path ||
+      //     location.pathname === menuItemProps.path
+      //   ) {
+      //     return defaultDom;
+      //   }
+      //   return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+      // }}
+      // breadcrumbRender={(routers = []) => [
+      //   {
+      //     path: '/',
+      //     breadcrumbName: formatMessage({ id: 'menu.home' }),
+      //   },
+      //   ...routers,
+      // ]}
+      // itemRender={(route, params, routes, paths) => {
+      //   const first = routes.indexOf(route) === 0;
+      //   return first ? (
+      //     <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+      //   ) : (
+      //     <span>{route.breadcrumbName}</span>
+      //   );
+      // }}
+      // footerRender={() => defaultFooterDom}
+      // menuDataRender={menuDataRender}
+      // rightContentRender={() => <RightContent />}
     >
       {children}
     </ProLayout>

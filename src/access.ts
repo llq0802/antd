@@ -9,7 +9,7 @@ export default function access(initialState: { currentUser?: API.CurrentUser } |
     routerAccess: (currentRoute: Record<string, any>) => {
       // console.log(' 权限路由控制相关的函数', currentRoute);
       // hasRouters.includes(currentRoute.path)
-      return false;
+      return true;
     },
   };
 }

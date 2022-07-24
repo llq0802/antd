@@ -1,14 +1,12 @@
-import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from 'umi';
-import { history, Link } from 'umi';
+import { useModel } from 'umi';
+import { history } from 'umi';
 import defaultSettings from '../config/defaultSettings';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-
-const isDev = process.env.NODE_ENV === 'development';
+import NavTabs from './layouts/NavTabs';
+import { currentUser as queryCurrentUser } from './services/public/api';
 const loginPath = '/user/login';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -34,7 +32,9 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  console.log('当前路由 ', history.location.pathname);
+  // const { initialState } = useModel('@@initialState');
+  console.log('初次加载时的路由 ', history.location.pathname);
+
   // 如果不是登录页面，执行获取当前登录人信息
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
@@ -53,42 +53,48 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    // pageTitleRender: false,
+    // menu: {
+    //   // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+    //   params: initialState,
+    //   request: async (params, defaultMenuData) => {
+    //     // return initialState.menuData;
+    //     console.log('params ', params);
+    //     console.log('defaultMenuData ', defaultMenuData);
+    //     return defaultMenuData;
+    //   },
+    // },
+    links: [],
+    // pageTitleRender: (props) => {
+    //   return props.location.pathname;
+    // },
+    footerRender: false,
+    menuHeaderRender: false,
+    disableContentMargin: true,
     rightContentRender: () => <RightContent />,
-    disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: 'llq',
     },
-    footerRender: () => <Footer />,
     onPageChange: (e) => {
       const { location } = history;
-      // console.log('onPageChange', e);
+      console.log('onPageChange', e?.pathname);
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
-      }
+      // if (!initialState?.currentUser && location.pathname !== loginPath) {
+      //   history.push(loginPath);
+      // }
     },
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-          <Link to="/~docs" key="docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
-      : [],
-    menuHeaderRender: undefined,
+
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
-    // 增加一个 loading 的状态
+    // 自定义 404页面
+    // noFound:<div>unAccessible</div>,
     childrenRender: (children, props) => {
-      // if (initialState?.loading) return <PageLoading />;
+      // 增加一个 loading 的状态
+      if (initialState?.loading) return <PageLoading />;
+
       return (
         <>
           {children}
+          {/* <NavTabs content={children} /> */}
           {!props.location?.pathname?.includes('/login') && (
             <SettingDrawer
               disableUrlParams
@@ -130,5 +136,21 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 //   //   path: '/foo',
 //   //   exact: true,
 //   //   component: require('@/extraRoutes/foo').default,
+//   // });
+// }
+
+/**
+ * 比如用于渲染之前做权限校验，
+ * @param oldRender
+ */
+// export function render(oldRender) {
+//   console.log('比如用于渲染之前做权限校验，');
+//   oldRender();
+
+//   //   if (auth.isLogin) { oldRender() }
+//   //   else {
+//   //     history.push('/login');
+//   //     oldRender()
+//   //   }
 //   // });
 // }
