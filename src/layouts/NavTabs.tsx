@@ -1,19 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
-import type { FC, ReactNode } from 'react';
-import { Tabs, Button } from 'antd';
+import { useState, useEffect ,ReactNode} from 'react';
+// import type { FC, ReactNode, MouseEvent, KeyboardEvent } from 'react';
+import { Tabs, Dropdown, Space, Menu } from 'antd';
 import { history } from 'umi';
-
+import { DownOutlined } from '@ant-design/icons';
 const { TabPane } = Tabs;
 
 type TabsCompType = {
   content: ReactNode;
 };
+
+type PanesType = {
+  content: ReactNode;
+  title: string;
+  pathname: string;
+};
 const TabsComp: FC<TabsCompType> = ({ content }) => {
-  // console.log('Tabs', history.location.pathname);
   const curPathname = history.location.pathname;
-  const [activeKey, setActiveKey] = useState(history.location.pathname);
-  const [panes, setPanes] = useState([]);
-  const onChange = (key: string) => {
+  const [activeKey, setActiveKey] = useState<string>(history.location.pathname);
+  const [panes, setPanes] = useState<PanesType[]>([]);
+
+  const onChange = (key: string): void => {
     history.push(key);
   };
 
@@ -33,31 +39,51 @@ const TabsComp: FC<TabsCompType> = ({ content }) => {
       });
     }
     setActiveKey(curPathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curPathname]);
 
-  const remove = (targetKey: string) => {
-    const targetIndex = panes.findIndex((pane) => pane.pathname === targetKey);
-    const newPanes = panes.filter((pane) => pane.pathname !== targetKey);
-
-    console.log('remove', targetIndex);
-    console.log('newPanes', newPanes);
-
-    if (newPanes.length && targetKey === activeKey) {
-      const { pathname } =
-        newPanes[targetIndex === newPanes.length ? targetIndex - 1 : targetIndex];
-      history.replace(pathname);
-    }
-    if (!newPanes.length) {
-      history.replace('/dashboard');
-    }
-    setPanes(newPanes);
-  };
-
-  const onEdit = (targetKey: string, action: 'add' | 'remove') => {
+  const onEdit = (
+    targetKey: string | MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>,
+    action: 'add' | 'remove',
+  ): void => {
     if (action === 'remove') {
-      remove(targetKey);
+      const targetIndex = panes.findIndex((pane) => pane.pathname === targetKey);
+      const newPanes = panes.filter((pane) => pane.pathname !== targetKey);
+      if (newPanes.length && targetKey === activeKey) {
+        const { pathname } =
+          newPanes[targetIndex === newPanes.length ? targetIndex - 1 : targetIndex];
+        history.replace(pathname);
+      }
+      if (!newPanes.length) {
+        history.replace('/dashboard');
+      }
+      setPanes(newPanes);
     }
   };
+  const menu: JSX.Element = (
+    <Menu
+      items={[
+        {
+          key: '1',
+          label: '关闭其他',
+        },
+        {
+          key: '2',
+          label: '关闭全部',
+        },
+      ]}
+    />
+  );
+  const tabBarExtraContent: JSX.Element = (
+    <Dropdown overlay={menu}>
+      <a onClick={(e) => e.preventDefault()}>
+        <Space>
+          更多
+          <DownOutlined />
+        </Space>
+      </a>
+    </Dropdown>
+  );
 
   return (
     <>
@@ -66,13 +92,10 @@ const TabsComp: FC<TabsCompType> = ({ content }) => {
         onChange={onChange}
         activeKey={activeKey}
         type="editable-card"
+        // @ts-ignore
         onEdit={onEdit}
         destroyInactiveTabPane={false}
-        // renderTabBar={(props, DefaultTabBar) => {
-        //   console.log(props);
-        //   console.log(DefaultTabBar);
-        //   return <span>789</span>;
-        // }}
+        tabBarExtraContent={tabBarExtraContent}
       >
         {panes?.map((item) => {
           return (
@@ -85,5 +108,4 @@ const TabsComp: FC<TabsCompType> = ({ content }) => {
     </>
   );
 };
-
 export default TabsComp;

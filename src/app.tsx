@@ -1,6 +1,7 @@
 import RightContent from '@/components/RightContent';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
+import type { ReactNode } from 'react';
 import type { RunTimeLayoutConfig } from 'umi';
 import { useModel } from 'umi';
 import { history } from 'umi';
@@ -78,16 +79,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       const { location } = history;
       console.log('onPageChange', e?.pathname);
       // 如果没有登录，重定向到 login
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath);
-      // }
+      if (!initialState?.currentUser && location.pathname !== loginPath) {
+        history.push(loginPath);
+      }
     },
 
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 自定义 404页面
     // noFound:<div>unAccessible</div>,
-    childrenRender: (children, props) => {
+    childrenRender: (children: ReactNode, props: Record<string, any>) => {
       // 增加一个 loading 的状态
       if (initialState?.loading) return <PageLoading />;
 

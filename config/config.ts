@@ -57,4 +57,5 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  // chunks: ['vendors', 'antd', 'echarts', 'umi'],
 });
